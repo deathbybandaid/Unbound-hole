@@ -126,31 +126,36 @@ else
   echo "Not downloading file"
 fi
 
-# adapt the configuration
-echo "adjusting config based on Pi-hole"
-
-
-if [[ $IPV4_ADDRESS  ]]
+if [[ $DOWNLOADFRESHCONF = true ]]
 then
-  echo "IPv4 is setup"
-else
-  echo "IPv4 is not setup"
-  sed -i s/do-ip4\:[[:space:]]yes/do-ip4\:[[:space:]]no/ $UNBOUNDHOLECONFTEMP
+  # adapt the configuration
+  echo "adjusting config based on Pi-hole"
+
+
+  if [[ $IPV4_ADDRESS ]]
+  then
+    echo "IPv4 is setup"
+  else
+    echo "IPv4 is not setup"
+    sed -i s/do-ip4\:[[:space:]]yes/do-ip4\:[[:space:]]no/ $UNBOUNDHOLECONFTEMP
+  fi
+
+
+  if [[ $IPV6_ADDRESS ]]
+  then
+    echo "IPv6 is setup"
+    sed -i s/do-ip4\:[[:space:]]no/do-ip4\:[[:space:]]yes/ $UNBOUNDHOLECONFTEMP
+  else
+    echo "IPv6 is not setup"
+  fi
+
+  # move config file
+  mv $UNBOUNDHOLECONFTEMP $UNBOUNDHOLECONF
 fi
 
-
-if [[ $IPV6_ADDRESS  ]]
-then
-  echo "IPv6 is setup"
-  sed -i s/do-ip4\:[[:space:]]no/do-ip4\:[[:space:]]yes/ $UNBOUNDHOLECONFTEMP
-else
-  echo "IPv6 is not setup"
-fi
-
-# move config file
-mv $UNBOUNDHOLECONFTEMP $UNBOUNDHOLECONF
-
-service unbound restart
+echo "Starting Unbound with Pi-hole Config"
+service unbound stop
+service unbound start
 
 # Test Config on IPv4
 if [[ $IPV4_ADDRESS  ]]
@@ -164,3 +169,4 @@ if [[ $IPV6_ADDRESS  ]]
 then
   echo "Testing IPv6 configuration"
 fi
+

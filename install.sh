@@ -22,6 +22,7 @@ TEMPROOTS=/tmp/root.hints
 
 # Pi-hole installation detection
 PIHOLEDIR=/etc/pihole
+PIHOLECONF="${PIHOLEDIR}/setupVars.conf"
 
 # Prompt user to install Pi-hole if not already
 if [[ -d $PIHOLEDIR ]]
@@ -31,3 +32,5 @@ else
   echo "Pi-hole not detected, exitting."
   exit 1
 fi
+
+echo "grrr"

@@ -18,24 +18,13 @@ ROOTSURL=https://www.internic.net/domain/named.root
 TEMPROOTS=/tmp/root.hints
 
 # Pi-hole installation detection
-PIHOLEDIR=
+PIHOLEDIR=/etc/pihole
 
 # Prompt user to install Pi-hole if not already
-if [[ -f $PIHOLEDIR ]]
+if [[ -d $PIHOLEDIR ]]
 then
   echo "Pi-hole detected, proceding with the install!"
 else
-  echo "grr"
+  echo "Pi-hole not detected, exitting."
+  exit 1
 fi
-
-CURRENTFILE=/var/lib/unbound/root.hints
-TEMPFILE=/tmp/root.hints
-
-sudo apt install unbound
-
-wget -O root.hints https://www.internic.net/domain/named.root
-sudo mv root.hints /var/lib/unbound/
-
-/etc/unbound/unbound.conf.d/pi-hole.conf
-
-sudo service unbound start

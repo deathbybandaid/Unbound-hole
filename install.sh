@@ -32,6 +32,8 @@ UNBOUNDHOLECONF=/etc/unbound/unbound.conf.d/pi-hole.conf
 UNBOUNDHOLECONFTEMP=/tmp/pi-hole.conf
 UNBOUNDHOLECONFURL=https://raw.githubusercontent.com/deathbybandaid/Unbound-hole/master/pi-hole.conf
 
+whiptail --msgbox --backtitle "Welcome" --title "Unbound-hole automated installer" "\\n\\nThis installer will adjust your Pi-hole device to double as an All-Around DNS Solution!" 10 80
+
 # Prompt user to install Pi-hole if not already
 if [[ -d $PIHOLEDIR ]]
 then

@@ -193,3 +193,5 @@ then
   echo "Add ::1#5353 to your Pi-hole configuration."
 fi
 
+whiptail --msgbox --backtitle "Welcome" --title "Unbound-hole automated installer" "\\n\\nSetup Complete!" 10 80
+

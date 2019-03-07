@@ -53,6 +53,10 @@ fi
 # Pull Pi-hole setup vars
 source $PIHOLECONF
 
+# Running apt update
+echo "updating sources"
+apt update
+
 # Install unbound
 if which unbound >/dev/null;
 then

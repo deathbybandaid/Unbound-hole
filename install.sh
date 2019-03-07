@@ -33,4 +33,18 @@ else
   exit 1
 fi
 
+# Prompt user to install Pi-hole if not already
+if [[ -f $PIHOLECONF ]]
+then
+  echo "Pi-hole config detected, proceding with the install!"
+else
+  echo "Pi-hole config not detected, exitting."
+  exit 1
+fi
+
+source $PIHOLECONF
+
+echo $IPV4_ADDRESS
+
 echo "grrr"
+

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SOURCEURL=https://www.internic.net/domain/named.root
+ROOTSURL=https://www.internic.net/domain/named.root
 CURRENTFILE=/var/lib/unbound/root.hints
 TEMPFILE=/home/root.hints
 DOWNLOADFRESH=false
@@ -8,7 +8,7 @@ DOWNLOADFRESH=false
 if [[ -f $CURRENTFILE ]]
 then
   echo "Checking existing file"
-  SOURCEMODIFIEDLAST=$(curl --silent --head $SOURCEURL | awk -F: '/^Last-Modified/ { print $2 }')
+  SOURCEMODIFIEDLAST=$(curl --silent --head $ROOTSURL | awk -F: '/^Last-Modified/ { print $2 }')
   SOURCEMODIFIEDTIME=$(date --date="$SOURCEMODIFIEDLAST" +%s)
   LOCALFILEMODIFIEDLAST=$(stat -c %z "$CURRENTFILE")
   LOCALFILEMODIFIEDTIME=$(date --date="$LOCALFILEMODIFIEDLAST" +%s)
@@ -28,7 +28,7 @@ fi
 if [[ $DOWNLOADFRESH = true ]]
 then
   echo "Attempting to download file"
-  wget -O $TEMPFILE $SOURCEURL
+  wget -O $TEMPFILE $ROOTSURL
   FETCHFILESIZE=$(stat -c%s $TEMPFILE)
   if [[ $FETCHFILESIZE -gt 0 ]]
   then

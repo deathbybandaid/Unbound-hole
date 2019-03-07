@@ -2,7 +2,7 @@
 
 ROOTSURL=https://www.internic.net/domain/named.root
 CURRENTFILE=/var/lib/unbound/root.hints
-TEMPFILE=/home/root.hints
+TEMPFILE=/tmp/root.hints
 DOWNLOADFRESH=false
 
 if [[ -f $CURRENTFILE ]]

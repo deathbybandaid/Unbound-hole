@@ -57,9 +57,11 @@ source $PIHOLECONF
 if which unbound >/dev/null;
 then
   echo "Unbound is already installed"
+  restartunbound=true
 else
   echo "Installing Unbound"
   apt-get install -y unbound
+  restartunbound=false
 fi
 
 # Install root.hints file
@@ -103,18 +105,7 @@ fi
 echo "Installing config file"
 if [[ -f $UNBOUNDHOLECONF ]]
 then
-  echo "Checking existing file"
-  SOURCEMODIFIEDLAST=$(curl --silent --head $UNBOUNDHOLECONFURL | awk -F: '/^Last-Modified/ { print $2 }')
-  SOURCEMODIFIEDTIME=$(date --date="$SOURCEMODIFIEDLAST" +%s)
-  LOCALFILEMODIFIEDLAST=$(stat -c %z "$UNBOUNDHOLECONF")
-  LOCALFILEMODIFIEDTIME=$(date --date="$LOCALFILEMODIFIEDLAST" +%s)
-  if [[ $LOCALFILEMODIFIEDTIME -lt $SOURCEMODIFIEDTIME ]]
-  then
-    DOWNLOADFRESHCONF=true
-    echo "File updated online"
-  else
-    echo "File not updated online"
-  fi
+  echo "File already exists"
 else
   DOWNLOADFRESHCONF=true
   echo "File Missing"
@@ -128,10 +119,15 @@ then
   FETCHFILESIZE=$(stat -c%s $UNBOUNDHOLECONFTEMP)
   if [[ $FETCHFILESIZE -gt 0 ]]
   then
-     mv $UNBOUNDHOLECONFTEMP $UNBOUNDHOLECONF
+     echo "File download success"
   else
     echo "File download failed"
+    exit 1
   fi
 else
   echo "Not downloading file"
 fi
+
+# adapt the configuration
+
+# mv $UNBOUNDHOLECONFTEMP $UNBOUNDHOLECONF

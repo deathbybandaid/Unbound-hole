@@ -57,11 +57,9 @@ source $PIHOLECONF
 if which unbound >/dev/null;
 then
   echo "Unbound is already installed"
-  restartunbound=true
 else
   echo "Installing Unbound"
   apt-get install -y unbound
-  restartunbound=false
 fi
 
 # Install root.hints file
@@ -135,10 +133,8 @@ echo "adjusting config based on Pi-hole"
 if [[ $IPV4_ADDRESS  ]]
 then
   echo "IPv4 is setup"
-  ipfour=true
 else
   echo "IPv4 is not setup"
-  ipfour=false
   sed -i s/do-ip4\:[[:space:]]yes/do-ip4\:[[:space:]]no/ $UNBOUNDHOLECONFTEMP
 fi
 
@@ -146,11 +142,25 @@ fi
 if [[ $IPV6_ADDRESS  ]]
 then
   echo "IPv6 is setup"
-  ipsix=true
   sed -i s/do-ip4\:[[:space:]]no/do-ip4\:[[:space:]]yes/ $UNBOUNDHOLECONFTEMP
 else
   echo "IPv6 is not setup"
-  ipsix=false
 fi
 
+# move config file
 mv $UNBOUNDHOLECONFTEMP $UNBOUNDHOLECONF
+
+service unbound restart
+
+# Test Config on IPv4
+if [[ $IPV4_ADDRESS  ]]
+then
+  echo "Testing IPv4 configuration"
+fi
+
+
+# Test Config on IPv6
+if [[ $IPV6_ADDRESS  ]]
+then
+  echo "Testing IPv6 configuration"
+fi

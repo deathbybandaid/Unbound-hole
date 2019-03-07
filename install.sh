@@ -9,6 +9,9 @@
 # Pi-hole can be installed by running:
 # curl -sSL https://install.pi-hole.net | bash
 
+# error handling
+set -e
+
 ######## VARIABLES #########
 
 # URL to download root.hints file from internic

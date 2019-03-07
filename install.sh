@@ -18,14 +18,19 @@ set -e
 ROOTSURL=https://www.internic.net/domain/named.root
 
 # temporary download location for root.hints
-TEMPROOTS=/tmp/root.hints
+ROOTSTEMP=/tmp/root.hints
 
 # location to implant root.hints file
-CURRENTROOTS=/var/lib/unbound/root.hints
+ROOTSFILE=/var/lib/unbound/root.hints
 
 # Pi-hole installation detection
 PIHOLEDIR=/etc/pihole
 PIHOLECONF="${PIHOLEDIR}/setupVars.conf"
+
+# unbound config file
+UNBOUNDHOLECONF=/etc/unbound/unbound.conf.d/pi-hole.conf
+UNBOUNDHOLECONFTEMP=/tmp/pi-hole.conf
+UNBOUNDHOLECONFURL=https://raw.githubusercontent.com/deathbybandaid/Unbound-hole/master/pi-hole.conf
 
 # Prompt user to install Pi-hole if not already
 if [[ -d $PIHOLEDIR ]]
@@ -58,34 +63,72 @@ else
 fi
 
 # Install root.hints file
-if [[ -f $CURRENTROOTS ]]
+echo "Installing root.hints file"
+if [[ -f $ROOTSFILE ]]
 then
   echo "Checking existing file"
   SOURCEMODIFIEDLAST=$(curl --silent --head $ROOTSURL | awk -F: '/^Last-Modified/ { print $2 }')
   SOURCEMODIFIEDTIME=$(date --date="$SOURCEMODIFIEDLAST" +%s)
-  LOCALFILEMODIFIEDLAST=$(stat -c %z "$CURRENTROOTS")
+  LOCALFILEMODIFIEDLAST=$(stat -c %z "$ROOTSFILE")
   LOCALFILEMODIFIEDTIME=$(date --date="$LOCALFILEMODIFIEDLAST" +%s)
   if [[ $LOCALFILEMODIFIEDTIME -lt $SOURCEMODIFIEDTIME ]]
   then
-    DOWNLOADFRESH=true
+    DOWNLOADFRESHROOTS=true
     echo "File updated online"
   else
     echo "File not updated online"
   fi
 else
-  DOWNLOADFRESH=true
+  DOWNLOADFRESHROOTS=true
   echo "File Missing"
 fi
 
 
-if [[ $DOWNLOADFRESH = true ]]
+if [[ $DOWNLOADFRESHROOTS = true ]]
 then
   echo "Attempting to download file"
-  wget -O $TEMPROOTS $ROOTSURL
-  FETCHFILESIZE=$(stat -c%s $TEMPROOTS)
+  wget -O $ROOTSTEMP $ROOTSURL
+  FETCHFILESIZE=$(stat -c%s $ROOTSTEMP)
   if [[ $FETCHFILESIZE -gt 0 ]]
   then
-     mv $TEMPROOTS $CURRENTROOTS
+     mv $ROOTSTEMP $ROOTSFILE
+  else
+    echo "File download failed"
+  fi
+else
+  echo "Not downloading file"
+fi
+
+# Install unbound config file
+echo "Installing config file"
+if [[ -f $UNBOUNDHOLECONF ]]
+then
+  echo "Checking existing file"
+  SOURCEMODIFIEDLAST=$(curl --silent --head $UNBOUNDHOLECONFURL | awk -F: '/^Last-Modified/ { print $2 }')
+  SOURCEMODIFIEDTIME=$(date --date="$SOURCEMODIFIEDLAST" +%s)
+  LOCALFILEMODIFIEDLAST=$(stat -c %z "$UNBOUNDHOLECONF")
+  LOCALFILEMODIFIEDTIME=$(date --date="$LOCALFILEMODIFIEDLAST" +%s)
+  if [[ $LOCALFILEMODIFIEDTIME -lt $SOURCEMODIFIEDTIME ]]
+  then
+    DOWNLOADFRESHCONF=true
+    echo "File updated online"
+  else
+    echo "File not updated online"
+  fi
+else
+  DOWNLOADFRESHCONF=true
+  echo "File Missing"
+fi
+
+
+if [[ $DOWNLOADFRESHCONF = true ]]
+then
+  echo "Attempting to download file"
+  wget -O $UNBOUNDHOLECONFTEMP $UNBOUNDHOLECONFURL
+  FETCHFILESIZE=$(stat -c%s $UNBOUNDHOLECONFTEMP)
+  if [[ $FETCHFILESIZE -gt 0 ]]
+  then
+     mv $UNBOUNDHOLECONFTEMP $UNBOUNDHOLECONF
   else
     echo "File download failed"
   fi

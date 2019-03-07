@@ -1,16 +1,16 @@
 #!/bin/bash
 
 ROOTSURL=https://www.internic.net/domain/named.root
-CURRENTFILE=/var/lib/unbound/root.hints
+CURRENTROOTS=/var/lib/unbound/root.hints
 TEMPROOTS=/tmp/root.hints
 DOWNLOADFRESH=false
 
-if [[ -f $CURRENTFILE ]]
+if [[ -f $CURRENTROOTS ]]
 then
   echo "Checking existing file"
   SOURCEMODIFIEDLAST=$(curl --silent --head $ROOTSURL | awk -F: '/^Last-Modified/ { print $2 }')
   SOURCEMODIFIEDTIME=$(date --date="$SOURCEMODIFIEDLAST" +%s)
-  LOCALFILEMODIFIEDLAST=$(stat -c %z "$CURRENTFILE")
+  LOCALFILEMODIFIEDLAST=$(stat -c %z "$CURRENTROOTS")
   LOCALFILEMODIFIEDTIME=$(date --date="$LOCALFILEMODIFIEDLAST" +%s)
   if [[ $LOCALFILEMODIFIEDTIME -lt $SOURCEMODIFIEDTIME ]]
   then
@@ -32,7 +32,7 @@ then
   FETCHFILESIZE=$(stat -c%s $TEMPROOTS)
   if [[ $FETCHFILESIZE -gt 0 ]]
   then
-     mv $TEMPROOTS $CURRENTFILE
+     mv $TEMPROOTS $CURRENTROOTS
   else
     echo "File download failed"
   fi

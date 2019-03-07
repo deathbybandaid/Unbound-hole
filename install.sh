@@ -158,15 +158,36 @@ service unbound stop
 service unbound start
 
 # Test Config on IPv4
-if [[ $IPV4_ADDRESS  ]]
+if [[ $IPV4_ADDRESS ]]
 then
-  echo "Testing IPv4 configuration"
+  echo "Testing IPv4 configuration on pi-hole.net"
+  IPFOURSTATUS=$(dig -4 A pi-hole.net @127.0.0.1 -p 5353 +short)
+  if  [[ $IPFOURSTATUS ]]
+  then
+    echo "IPv4 test success. Reached pi-hole.net at $IPFOURSTATUS"
+  fi
 fi
 
 
 # Test Config on IPv6
-if [[ $IPV6_ADDRESS  ]]
+if [[ $IPV6_ADDRESS ]]
 then
-  echo "Testing IPv6 configuration"
+  echo "Testing IPv6 configuration on pi-hole.net"
+  IPSIXSTATUS=$(dig -6 AAAA pi-hole.net @::1 -p 5353 +short)
+  if  [[ $IPSIXSTATUS ]]
+  then
+    echo "IPv6 test success. Reached pi-hole.net at $IPSIXSTATUS"
+  fi
+fi
+
+# instructions for adding to Pi-hole
+if [[ $IPV4_ADDRESS ]]
+then
+  echo "Add 127.0.0.1#5353 to your Pi-hole configuration."
+fi
+
+if [[ $IPV6_ADDRESS ]]
+then
+  echo "Add ::1#5353 to your Pi-hole configuration."
 fi
 

@@ -41,4 +41,7 @@ else
 fi
 
 # restart unbound
-service unbound restart
+if [[ $DOWNLOADFRESH = true ]]
+then
+  service unbound restart
+fi

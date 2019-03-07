@@ -2,7 +2,7 @@
 
 ROOTSURL=https://www.internic.net/domain/named.root
 CURRENTFILE=/var/lib/unbound/root.hints
-TEMPFILE=/tmp/root.hints
+TEMPROOTS=/tmp/root.hints
 DOWNLOADFRESH=false
 
 if [[ -f $CURRENTFILE ]]
@@ -28,11 +28,11 @@ fi
 if [[ $DOWNLOADFRESH = true ]]
 then
   echo "Attempting to download file"
-  wget -O $TEMPFILE $ROOTSURL
-  FETCHFILESIZE=$(stat -c%s $TEMPFILE)
+  wget -O $TEMPROOTS $ROOTSURL
+  FETCHFILESIZE=$(stat -c%s $TEMPROOTS)
   if [[ $FETCHFILESIZE -gt 0 ]]
   then
-     mv $TEMPFILE $CURRENTFILE
+     mv $TEMPROOTS $CURRENTFILE
   else
     echo "File download failed"
   fi

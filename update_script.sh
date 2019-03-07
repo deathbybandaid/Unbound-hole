@@ -39,3 +39,6 @@ then
 else
   echo "Not downloading file"
 fi
+
+# restart unbound
+service unbound restart

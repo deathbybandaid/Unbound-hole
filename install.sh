@@ -53,10 +53,6 @@ fi
 # Pull Pi-hole setup vars
 source $PIHOLECONF
 
-# Running apt update
-echo "updating sources"
-apt update
-
 # Install unbound
 if which unbound >/dev/null;
 then
@@ -133,5 +129,28 @@ else
 fi
 
 # adapt the configuration
+echo "adjusting config based on Pi-hole"
 
-# mv $UNBOUNDHOLECONFTEMP $UNBOUNDHOLECONF
+
+if [[ $IPV4_ADDRESS  ]]
+then
+  echo "IPv4 is setup"
+  ipfour=true
+else
+  echo "IPv4 is not setup"
+  ipfour=false
+  sed -i s/do-ip4\:[[:space:]]yes/do-ip4\:[[:space:]]no/ $UNBOUNDHOLECONFTEMP
+fi
+
+
+if [[ $IPV6_ADDRESS  ]]
+then
+  echo "IPv6 is setup"
+  ipsix=true
+  sed -i s/do-ip4\:[[:space:]]no/do-ip4\:[[:space:]]yes/ $UNBOUNDHOLECONFTEMP
+else
+  echo "IPv6 is not setup"
+  ipsix=false
+fi
+
+mv $UNBOUNDHOLECONFTEMP $UNBOUNDHOLECONF

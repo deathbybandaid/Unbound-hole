@@ -146,7 +146,7 @@ then
   if [[ $IPV6_ADDRESS ]]
   then
     echo "IPv6 is setup"
-    sed -i s/do-ip4\:[[:space:]]no/do-ip4\:[[:space:]]yes/ $UNBOUNDHOLECONFTEMP
+    sed -i s/do-ip6\:[[:space:]]no/do-ip6\:[[:space:]]yes/ $UNBOUNDHOLECONFTEMP
   else
     echo "IPv6 is not setup"
   fi
